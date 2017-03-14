@@ -15,7 +15,7 @@
 from arbalet.core import Application, Rate
 from os.path import isfile, join, realpath, dirname
 from os import chdir
-from sys import executable
+from sys import executable 
 from json import load
 from subprocess import Popen
 from glob import glob

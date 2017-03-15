@@ -23,6 +23,7 @@ from shlex import split
 from time import sleep, time
 from pygame import JOYBUTTONDOWN
 from signal import SIGINT, signal
+
 import pygame
 import argparse
 
@@ -33,12 +34,12 @@ class Menu(Application):
     
     def __init__(self, argparser, touch_mode='quadridirectional'):
         self.start_server(True, True)
-        
+        sleep(2.0)
         Application.__init__(self, argparser, touch_mode=touch_mode)        
         self.running = True
  
     def run(self):        
-        
+        self.exit = False
         if len(self.args.menu) > 0:
             menu_file = join(realpath(dirname(__file__)), self.args.menu)
             if not isfile(menu_file):
@@ -51,6 +52,8 @@ class Menu(Application):
                 try:
                     self.execute_menu()
                 finally:                    
+                    # Deactivate touch!
+                    self.arbalet.touch.toggle_touch()
                     self.model.set_all(self.BG_COLOR)
                     self.model.flash()      
                     self.close_server()
@@ -72,8 +75,8 @@ class Menu(Application):
         self.server_process = Popen(command.split())
     
     def close_processes(self, signal, frame):
-        self.running = False
-        
+        self.running = False        
+    
     def execute_appstart(self, appdetails):        
         
         def purify_args(args):
@@ -107,14 +110,14 @@ class Menu(Application):
         args = "{} -m {} {}".format(executable, appdetails['app'], appdetails['args'] if 'args' in appdetails else '')
         module_command = purify_args(expand_args(args.split(), join(*appdetails['app'].split('.'))))
         while self.running:  # Loop allowing the user to play again, by restarting app
-            print("[Arbalet Sequencer] STARTING {}".format(module_command))                        
-            
-            process = Popen(module_command, cwd=self.cwd)
+            print("[Arbalet Sequencer] STARTING {}".format(module_command))            
+            process = Popen(module_command)#,cwd=self.cwd 
             timeout = appdetails['timeout'] if 'timeout' in appdetails else -1
             reason = self.wait(timeout, appdetails['interruptible'], process) # TODO interruptible raw_input in new_thread for 2.7, exec with timeout= for 3
             print("[Arbalet Sequencer] END: {}".format(reason))
-            if reason != 'terminated' or not self.running:
-                process.send_signal(SIGINT)
+            if reason != 'terminated' or not self.running:                
+                #process.send_signal(SIGINT)
+                process.kill()
                 process.wait()
             if reason != 'restart':
                 break
@@ -147,24 +150,30 @@ class Menu(Application):
         for event in self.arbalet.touch.get():
             if self.is_touched == False:
                 x, y=self.queue.pop(0)
-                self.model.set_pixel(x,y, self.BG_COLOR)
+                self.model.set_pixel(x,y, self.BG_COLOR)                
                 
                 if event['key']=='up' and x > 0:
                     x -= 1
                 elif event['key']=='down' and x < self.height-1:
                     x += 1
                 elif event['key']=='right' and y < self.width-1:
-                    y += 1
                     # start App
-                    self.execute_appstart(self.menu['menu'][x])
-                    retval = True                    
+                    if self.menu['menu'][x] is None:
+                        # Exit
+                        self.exit = True
+                    else:                            
+                        sleep(0.1)
+                        self.execute_appstart(self.menu['menu'][x])
+                        retval = True                    
                 elif event['key']=='left' and y > 0:
                     y -= 1            
+                
                 self.model.set_pixel(x,y, self.PIXEL_COLOR)                
                 self.is_touched = True
                 
                 self.queue.append((x, y))
             else:
+                # Prevent double click
                 self.is_touched = False
                 
         return retval
@@ -186,27 +195,32 @@ class Menu(Application):
             self.model.write("   {} {}".format(i,command['app']), 'blue')            
             #print("_ {} {}".format(i,command['app']))
             i += 1
+        self.model.write("   {} Exit".format(i), 'blue') 
         
         # Print Menu control
         row = 1
         for command in self.menu['menu']:
             for y in range(row):
-                 self.model.set_pixel(row,y, 'blue')
+                 self.model.set_pixel(row-1,y, 'blue')
             row += 1
+        for y in range(row):
+            self.model.set_pixel(row-1,y, 'blue')
            
         self.HEAD=(0,5)
         self.queue=[self.HEAD]
         self.model.set_pixel(self.HEAD[0],self.HEAD[1], self.PIXEL_COLOR)
                 
-        while True:
+        while self.exit == False:
              if self.process_events() == True:
                 row = 1
                 for command in self.menu['menu']:
                     for y in range(row):
-                         self.model.set_pixel(row,y, 'blue')
+                         self.model.set_pixel(row-1,y, 'blue')
                     row += 1
+                for y in range(row):
+                    self.model.set_pixel(row-1,y, 'blue')    
              sleep(0.2)
-             
+           
              
 parser = argparse.ArgumentParser(description='Application Menu: Start different Applications defined in a menu.json')
 parser.add_argument('-q', '--menu',

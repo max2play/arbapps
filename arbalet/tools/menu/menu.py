@@ -5,8 +5,10 @@
 
     Runs and closes Arbalet apps according to a menu file
 
-    Copyright 2017 Stefan Rick - Max2Play project - http://github.com/max2play
+    Copyright 2015 Yoan Mollard - Arbalet project - http://github.com/arbalet-project
     License: GPL version 3 http://www.gnu.org/licenses/gpl.html
+    
+    Added Menu Control 2017 Stefan Rick - Max2Play project - http://github.com/max2play    
     
     EXECUTE WITH
     ~/Arbalet/arbapps/arbalet/tools/menu $ python menu.py -ng -w --server

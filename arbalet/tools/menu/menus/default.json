@@ -1,9 +1,8 @@
 {
-    "infinite": true,
     "menu": [
-        {"app":"tetris", "interruptible": true, "timeout": 50},
-        {"app":"colors", "args": "-t swipe", "timeout": 30, "interruptible": true},
-        {"app":"snake", "timeout": 40, "interruptible": true},
-        {"app":"spectrum", "interruptible": true, "timeout": 60}
+        {"app":"tetris", "interruptible": true},
+        {"app":"colors", "args": "-t swipe", "timeout": 60, "interruptible": true},
+        {"app":"snake", "interruptible": true},
+        {"app":"squeezespectrum", "interruptible": true}
     ]
 }

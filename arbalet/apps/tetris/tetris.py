@@ -253,8 +253,12 @@ class Tetris(Application):
             self.check_level_up()
 
         # Game over
-        if self.score>0:
-            self.music.game_over()
+        if self.score>-1:
+            print("play End Game Over")
+	    self.music.game_over()
             self.model.flash()
             self.model.write("GAME OVER! Score: {}, level {}".format(self.score, self.speed-1), 'deeppink')
-
+	print("Reached END")
+        exit()
+	print("still no Exit")
+	exit()

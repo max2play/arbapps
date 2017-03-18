@@ -57,8 +57,11 @@ class Menu(Application):
                     self.model.set_all(self.BG_COLOR)
                     self.model.flash()      
                     self.close_server()
-                    print("Exit")
-    
+                    sleep(1)
+                    print("Exiting Menu")
+        sleep(1)
+        exit()
+        
     def close_server(self):
         if self.server_process:
             self.server_process.send_signal(SIGINT)
@@ -113,7 +116,7 @@ class Menu(Application):
             print("[Arbalet Sequencer] STARTING {}".format(module_command))            
             process = Popen(module_command)#,cwd=self.cwd 
             timeout = appdetails['timeout'] if 'timeout' in appdetails else -1
-            reason = self.wait(timeout, appdetails['interruptible'], process) # TODO interruptible raw_input in new_thread for 2.7, exec with timeout= for 3
+            reason = self.wait(timeout, appdetails['interruptible'], process)
             print("[Arbalet Sequencer] END: {}".format(reason))
             if reason != 'terminated' or not self.running:                
                 #process.send_signal(SIGINT)

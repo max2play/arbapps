@@ -18,6 +18,7 @@ from arbalet.colors import mul, hsv_to_rgb
 from copy import copy
 from pylms.server import Server
 from pylms.player import Player
+from time import sleep
 import time
 import numpy
 import pyaudio
@@ -205,6 +206,6 @@ class SqueezeSpectrumAnalyser(Application):
         #Deactivate Touch
         self.arbalet.touch.toggle_touch()
         self.model.set_all('black')
-        self.model.flash()     
-         
+        sleep(1)  
+        print("End of Squeezespectrum")
         exit()

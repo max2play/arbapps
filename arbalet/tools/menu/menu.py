@@ -13,6 +13,9 @@
     EXECUTE WITH
     ~/Arbalet/arbapps/arbalet/tools/menu $ python menu.py -ng -w --server
     
+    Kill Group of Python processes by sending SIGINT to groupID: 
+    kill -SIGINT -1234 
+        
 """
 from arbalet.core import Application, Rate
 from os.path import isfile, join, realpath, dirname
@@ -57,7 +60,6 @@ class Menu(Application):
                     # Deactivate touch!
                     self.arbalet.touch.toggle_touch()
                     self.model.set_all(self.BG_COLOR)
-                    self.model.flash()      
                     self.close_server()
                     sleep(1)
                     print("Exiting Menu")

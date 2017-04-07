@@ -28,7 +28,6 @@ from shlex import split
 from time import sleep, time
 from pygame import JOYBUTTONDOWN
 from signal import SIGINT, signal
-
 import pygame
 import argparse
 
@@ -40,7 +39,7 @@ class Menu(Application):
     def __init__(self, argparser, touch_mode='quadridirectional'):
         self.start_server(True, True)
         sleep(2.0)
-        Application.__init__(self, argparser, touch_mode=touch_mode)        
+        Application.__init__(self, argparser, touch_mode=touch_mode)      
         self.running = True
  
     def run(self):        
@@ -60,11 +59,11 @@ class Menu(Application):
                     # Deactivate touch!
                     self.arbalet.touch.toggle_touch()
                     self.model.set_all(self.BG_COLOR)
+                    sleep(1)
                     self.close_server()
                     sleep(1)
                     print("Exiting Menu")
-        sleep(1)
-        exit()
+        raise SystemExit
         
     def close_server(self):
         if self.server_process:
@@ -149,13 +148,26 @@ class Menu(Application):
                 else:
                     # Any other activity resets the timer
                     start = time()
-            sleep(0.01)
+            sleep(0.1)# 0.01 TODO maybe more?
         return 'timeout' if (process is None or process.poll() is None) else 'terminated'
     
     def process_events(self):        
         retval = False
         for event in self.arbalet.touch.get():
             if self.is_touched == False:
+                self.timelasttouch = int(time())
+                if self.touchpadactive == False:
+                    # Print Menu control
+                    row = 1
+                    for command in self.menu['menu']:
+                        for y in range(row):
+                             self.model.set_pixel(row-1,y, 'blue')
+                        row += 1
+                    for y in range(row):
+                        self.model.set_pixel(row-1,y, 'blue')
+                    self.touchpadactive = True
+                    self.arbalet.touch.set_keypad(True)
+                
                 x, y=self.queue.pop(0)
                 self.model.set_pixel(x,y, self.BG_COLOR)                
                 
@@ -171,6 +183,7 @@ class Menu(Application):
                     else:                            
                         sleep(0.1)
                         self.execute_appstart(self.menu['menu'][x])
+                        self.timelasttouch = int(time())
                         retval = True                    
                 elif event['key']=='left' and y > 0:
                     y -= 1            
@@ -200,7 +213,7 @@ class Menu(Application):
         for command in self.menu['menu']:
             # Print Line for Selection
             self.model.write("   {} {}".format(i,command['app']), 'blue')            
-            #print("_ {} {}".format(i,command['app']))
+            print("_ {} {}".format(i,command['app']))
             i += 1
         self.model.write("   {} Exit".format(i), 'blue') 
         
@@ -216,6 +229,9 @@ class Menu(Application):
         self.HEAD=(0,5)
         self.queue=[self.HEAD]
         self.model.set_pixel(self.HEAD[0],self.HEAD[1], self.PIXEL_COLOR)
+        
+        self.touchpadactive = True
+        self.timelasttouch = int(time())
                 
         while self.exit == False:
              if self.process_events() == True:
@@ -227,6 +243,12 @@ class Menu(Application):
                 for y in range(row):
                     self.model.set_pixel(row-1,y, 'blue')    
              sleep(0.2)
+             if self.touchpadactive == True and self.timelasttouch < (int(time()) - 10):
+                print("Deactivate Touchpad and Blank Screen")
+                self.arbalet.touch.set_keypad(False)
+                self.touchpadactive = False
+                self.model.set_all(self.BG_COLOR)
+                
            
              
 parser = argparse.ArgumentParser(description='Application Menu: Start different Applications defined in a menu.json')
@@ -234,6 +256,6 @@ parser.add_argument('-q', '--menu',
                     type=str,
                     default='menus/default.json',
                     nargs='?',
-                    help='Configuration file describing the sequence of apps to launch')
+                    help='Configuration file for menu with apps to launch')
 Menu(parser).start()
              

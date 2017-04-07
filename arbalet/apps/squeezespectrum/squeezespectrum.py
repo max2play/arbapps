@@ -166,7 +166,7 @@ class SqueezeSpectrumAnalyser(Application):
         num_bands = self.width if self.args.vertical else self.height
         num_bins = self.height if self.args.vertical else self.width
         
-        # TODO: Stop Renderer When showing something else...
+        # Stop Renderer When showing something else...
         self.renderer = Renderer(self.model, self.height, self.width, num_bins, num_bands, self.args.vertical)
 
         input_device_info = pa.get_default_input_device_info()
@@ -189,7 +189,7 @@ class SqueezeSpectrumAnalyser(Application):
         print "Logged in: %s" % sc.logged_in
         print "Version: %s" % sc.get_version()
         
-        self.squeezeplayer = sc.get_player("b8:27:eb:f9:74:41")
+        self.squeezeplayer = sc.get_player("d0:50:99:2a:ab:05")
         print "Name: %s | Mode: %s | Time: %s | Connected: %s | WiFi: %s" % (self.squeezeplayer.get_name(), self.squeezeplayer.get_mode(), self.squeezeplayer.get_time_elapsed(), self.squeezeplayer.is_connected, self.squeezeplayer.get_wifi_signal_strength())
 
         print self.squeezeplayer.get_track_title()
@@ -202,10 +202,14 @@ class SqueezeSpectrumAnalyser(Application):
             rate.sleep()
 
         stream.close()
+        print("Stream Closed")
         pa.terminate()
+        print("PA Terminated")
         #Deactivate Touch
         self.arbalet.touch.toggle_touch()
+        print("Touch Deactivated")
         self.model.set_all('black')
         sleep(1)  
         print("End of Squeezespectrum")
-        exit()
+        
+        raise SystemExit

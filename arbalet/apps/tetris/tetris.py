@@ -178,7 +178,7 @@ class Tetris(Application):
     def wait_for_timeout_or_event(self, allow_events=True):
         t0 = time.time()
         while time.time()-t0 < 1./self.speed:
-            time.sleep(0.07)
+            time.sleep(0.14) # 0.07
             if allow_events and self.process_events():
                 return
 
@@ -258,7 +258,11 @@ class Tetris(Application):
 	    self.music.game_over()
             self.model.flash()
             self.model.write("GAME OVER! Score: {}, level {}".format(self.score, self.speed-1), 'deeppink')
-	print("Reached END")
-        exit()
-	print("still no Exit")
-	exit()
+	
+    print("Reached END")
+    self.arbalet.touch.toggle_touch()
+    print("Touch Deactivated")
+    self.model.set_all('black')
+    sleep(1)  
+    print("End of Squeezespectrum")
+    exit()

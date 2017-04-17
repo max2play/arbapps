@@ -5,6 +5,10 @@
 
     Copyright 2015 Yoan Mollard - Arbalet project - http://github.com/arbalet-project
     License: GPL version 3 http://www.gnu.org/licenses/gpl.html
+    
+    Stefan Rick Max2Play
+    Added Touchcontrol for Colors
+    
 """
 import random
 from arbalet.core import Application, Rate
@@ -25,8 +29,8 @@ class ColorDemo(Application):
         self.generator = self.generators[config['generator_id']]
         
         # Set some values
-        self.colors = [[1.0, 1.0, 1.0],[0.25, 1.0, 1.0],[0.5, 1.0, 1.0],[0.75, 1.0, 1.0],[0.15, 1.0, 1.0],[0.62, 1.0, 1.0],[0.35, 1.0, 1.0]]
-        #self.colors = [[1.0, 1.0, 0.5],[0.25, 1.0, 0.5],[0.5, 1.0, 1.0],[0.75, 1.0, 1.0],[0.15, 1.0, 1.0],[0.62, 1.0, 1.0],[0.35, 1.0, 1.0]]
+        self.colors = [(1.0, 1.0, 1.0),(0.25, 1.0, 1.0),(0.5, 1.0, 1.0),(0.75, 1.0, 1.0),(0.15, 1.0, 1.0),(0.62, 1.0, 1.0),(0.35, 1.0, 1.0)]
+        
         self.animationtypes = animations.keys()
         self.currentanimation = i = 0
         for curranim in self.animationtypes:
@@ -56,7 +60,7 @@ class ColorDemo(Application):
                     print('Change Colors...')
                     if len(self.colors) != 7:
                         # Reset to Default Colors
-                        self.colors = [[1.0, 1.0, 1.0],[0.25, 1.0, 1.0],[0.5, 1.0, 1.0],[0.75, 1.0, 1.0],[0.15, 1.0, 1.0],[0.62, 1.0, 1.0],[0.35, 1.0, 1.0]]    
+                        self.colors = [(1.0, 1.0, 1.0),(0.25, 1.0, 1.0),(0.5, 1.0, 1.0),(0.75, 1.0, 1.0),(0.15, 1.0, 1.0),(0.62, 1.0, 1.0),(0.35, 1.0, 1.0)]    
                     #Hue is the actual color from 0.0 (red) to 1.0 (also red because it's a wheel). 0.5 is cyan, 0.25 is green, 0.75 is purple...
                     #Saturation is its intensity from 0.0 to 1.0
                     #Value is its brightness from 0.0 (dark = black) to 1.0 (bright)                    
@@ -86,7 +90,7 @@ class ColorDemo(Application):
                 elif event['key']=='voldown':                    
                     print("Make All Current Colors darker")
                     for i in range(0, len(self.colors)):
-                        self.colors[i][2] -=  0.1
+                        self.colors[i] = (self.colors[i][0], self.colors[i][1], self.colors[i][2] - 0.1)
                     retval = True
                 elif event['key']=='exit':
                     print("Exit")

@@ -38,8 +38,10 @@ class Menu(Application):
     
     def __init__(self, argparser, touch_mode='quadridirectional'):
         self.start_server(True, True)
-        sleep(2.0)
-        Application.__init__(self, argparser, touch_mode=touch_mode)      
+        print("Now sleep 3 seconds...")
+        sleep(3.0)
+        print("Initiate menu...")
+        Application.__init__(self, argparser, touch_mode=touch_mode)
         self.running = True
  
     def run(self):        
@@ -91,7 +93,7 @@ class Menu(Application):
                     args.remove(rm_arg)
                 except ValueError:
                     pass
-            for add_arg in ['--no-gui', '--server']:
+            for add_arg in ['--no-gui', '--server=127.0.0.1']:
                 args.append(add_arg)
             return args
 
@@ -106,10 +108,8 @@ class Menu(Application):
                         expanded_args.append(expanded_arg)
             return expanded_args
         
-        # close Arbalink
-        self.arbalet.arbalink.close()
-        self.arbalet.arbaclient.close()
-        self.arbalet.events.close()
+        # close and free connection to Table for other Apps        
+        self.arbalet.free_connection()
         print("Arbalink and Arbaclient closed")
         
         
@@ -129,10 +129,9 @@ class Menu(Application):
                 break
         
         #Reconnect to Table
-        print("Reinit Hardware")
-        sleep(1)
-        self.arbalet.reinit_hardware()
-        print("Reinit Hardware Done")
+        print("Reinit Connection")
+        self.arbalet.reinit_connection()
+        print("Reinit Connection Done")
         
     def wait(self, timeout=-1, interruptible=False, process=None):
         start = time()
@@ -148,7 +147,7 @@ class Menu(Application):
                 else:
                     # Any other activity resets the timer
                     start = time()
-            sleep(0.1)# 0.01 TODO maybe more?
+            sleep(1)# 0.1 TODO maybe more?
         return 'timeout' if (process is None or process.poll() is None) else 'terminated'
     
     def process_events(self):        
@@ -212,7 +211,7 @@ class Menu(Application):
         i = 1
         for command in self.menu['menu']:
             # Print Line for Selection
-            self.model.write("   {} {}".format(i,command['app']), 'blue')            
+            #self.model.write("   {} {}".format(i,command['app']), 'blue')            
             print("_ {} {}".format(i,command['app']))
             i += 1
         self.model.write("   {} Exit".format(i), 'blue') 

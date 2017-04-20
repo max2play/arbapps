@@ -21,7 +21,9 @@ class Arbaserver(Application):
 
     def bind(self):
         self.connection = self.context.socket(zmq.PAIR)
-        connect_to = "tcp://0.0.0.0:" + self.port
+        print("[Arbalet server] binding to 127.0.0.1")
+        connect_to = "tcp://127.0.0.1:" + self.port
+        #connect_to = "tcp://0.0.0.0:" + self.port
         self.connection.bind(connect_to)
 
     def work(self):

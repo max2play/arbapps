@@ -181,15 +181,17 @@ class SqueezeSpectrumAnalyser(Application):
 
         stream.start_stream()
 
-        rate = Rate(5)
+        rate = Rate(30)
         
-        # TODO: get Host and Player Mac from Config-File - Autodiscover Server
-        sc = Server(hostname="192.168.69.27", port=9090, username="", password="")
+        # get Host and Player Mac from Config-File - Autodiscover Server                
+        print ("Server: {}". format(self.args.squeezebox_server))
+        
+        sc = Server(hostname=self.args.squeezebox_server, port=9090, username="", password="")
         sc.connect()
         print "Logged in: %s" % sc.logged_in
         print "Version: %s" % sc.get_version()
         
-        self.squeezeplayer = sc.get_player("d0:50:99:2a:ab:05")
+        self.squeezeplayer = sc.get_player(self.args.squeezeplayer_mac)
         print "Name: %s | Mode: %s | Time: %s | Connected: %s | WiFi: %s" % (self.squeezeplayer.get_name(), self.squeezeplayer.get_mode(), self.squeezeplayer.get_time_elapsed(), self.squeezeplayer.is_connected, self.squeezeplayer.get_wifi_signal_strength())
 
         print self.squeezeplayer.get_track_title()

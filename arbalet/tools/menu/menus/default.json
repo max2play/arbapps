@@ -3,6 +3,6 @@
         {"app":"tetris", "interruptible": true},
         {"app":"colors", "args": "-t swipe", "interruptible": true},
         {"app":"snake", "interruptible": true},
-        {"app":"squeezespectrum", "interruptible": true}
+        {"app":"squeezespectrum", "args": "--squeezebox_server=192.168.69.27 --squeezeplayer_mac=b8:27:eb:f9:74:41", "interruptible": true}
     ]
 }

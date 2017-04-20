@@ -37,7 +37,7 @@ class Menu(Application):
     is_touched = False
     
     def __init__(self, argparser, touch_mode='quadridirectional'):
-        self.start_server(True, True)
+        #self.start_server(True, True)
         print("Now sleep 3 seconds...")
         sleep(3.0)
         print("Initiate menu...")
